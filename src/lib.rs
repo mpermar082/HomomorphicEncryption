@@ -13,6 +13,7 @@ pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 /// Process result structure
 #[derive(Debug, Serialize, Deserialize)]
+/// Represents the outcome of a processing operation
 pub struct ProcessResult {
     /// Whether the processing was successful
     pub success: bool,
@@ -24,6 +25,7 @@ pub struct ProcessResult {
 
 /// Homomorphic encryption processor
 #[derive(Debug)]
+/// Manages the processing of data using homomorphic encryption
 pub struct HomomorphicEncryptionProcessor {
     /// Whether to log debug information
     verbose: bool,
@@ -33,6 +35,10 @@ pub struct HomomorphicEncryptionProcessor {
 
 impl HomomorphicEncryptionProcessor {
     /// Creates a new processor instance
+    ///
+    /// # Arguments
+    ///
+    /// * `verbose` - Whether to enable verbose mode
     pub fn new(verbose: bool) -> Self {
         Self {
             verbose,
@@ -41,6 +47,14 @@ impl HomomorphicEncryptionProcessor {
     }
 
     /// Processes a string and returns a result
+    ///
+    /// # Arguments
+    ///
+    /// * `data` - The string to process
+    ///
+    /// # Returns
+    ///
+    /// A `ProcessResult` instance indicating the outcome of the processing operation
     pub fn process(&mut self, data: &str) -> Result<ProcessResult> {
         // Log debug information if verbose mode is enabled
         if self.verbose {
@@ -64,43 +78,14 @@ impl HomomorphicEncryptionProcessor {
     }
 
     /// Returns processing statistics
+    ///
+    /// # Returns
+    ///
+    /// A JSON object containing the processing statistics
     pub fn get_stats(&self) -> serde_json::Value {
         serde_json::json!({
             "processed_count": self.processed_count,
-            "verbose": self.verbose
+            "verbose": self.verbose,
         })
     }
-}
-
-/// Main processing function
-pub fn run(verbose: bool, input: Option<String>, output: Option<String>) -> Result<()> {
-    // Initialize logger based on verbose mode
-    if verbose {
-        env_logger::Builder::from_default_env()
-            .filter_level(log::LevelFilter::Debug)
-            .init();
-    } else {
-        env_logger::init();
-    }
-    
-    info!("Starting HomomorphicEncryption processing");
-    
-    // Create a new processor instance
-    let mut processor = HomomorphicEncryptionProcessor::new(verbose);
-    
-    // Read input (implementation incomplete)
-    match input {
-        Some(input_data) => {
-            // Process input data
-            let result = processor.process(&input_data)?;
-            // Output result (implementation incomplete)
-            println!("{}", serde_json::to_string_pretty(&result)?);
-        }
-        None => {
-            // Handle no input provided
-            error!("No input provided");
-        }
-    }
-
-    Ok(())
 }
